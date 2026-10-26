@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="ru" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Код Дизайна — дайджест фактов о графическом дизайне</title>
+  <meta name="description" content="Шрифты, логотипы, интерфейсы и брендинг: короткие факты из истории графического дизайна.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2308080a'/%3E%3Cpath d='M22 16v32M42 16L24 32l18 16' stroke='%23d9ff57' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,400;1,500&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08080a;
+      --surface: #101013;
+      --surface-2: #15151a;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f3f2ee;
+      --muted: #9a9aa2;
+      --accent: #d9ff57;
+      --accent-soft: rgba(217, 255, 87, 0.12);
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Тонкая сетка на фоне */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+      mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+    }
+
+    /* Мягкое свечение сверху */
+    body::after {
+      content: "";
+      position: fixed;
+      top: -42vh;
+      left: 50%;
+      z-index: 0;
+      width: 90vw;
+      height: 75vh;
+      pointer-events: none;
+      transform: translateX(-50%);
+      background: radial-gradient(closest-side, rgba(217, 255, 87, 0.1), transparent);
+    }
+
+    .site {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ---------- Шапка ---------- */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 18px 0;
+      background: rgba(8, 8, 10, 0.72);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.95rem;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .brand:hover .brand-mark {
+      background: var(--accent);
+      color: #0a0a0a;
+    }
+
+    .brand-name {
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .header-note {
+      color: #61616a;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .btn-add:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #0a0a0a;
+    }
+
+    /* ---------- Flash-сообщения ---------- */
+
+    .flash-stack {
+      display: grid;
+      gap: 10px;
+      padding-top: 24px;
+    }
+
+    .flash {
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--accent);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .flash-error { border-left-color: #ff6b6b; }
+
+    /* ---------- Hero ---------- */
+
+    .hero { padding: clamp(52px, 8vw, 104px) 0 clamp(36px, 5vw, 64px); }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 30px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(217, 255, 87, 0.85);
+    }
+
+    .hero-title {
+      margin: 0 0 38px;
+      font-family: "Unbounded", sans-serif;
+      font-size: clamp(3rem, 9vw, 7rem);
+      font-weight: 500;
+      line-height: 0.94;
+      letter-spacing: -0.055em;
+    }
+
+    .hero-title em {
+      padding-left: 0.04em;
+      color: var(--accent);
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.035em;
+    }
+
+    .hero-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .hero-lede {
+      max-width: 560px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: clamp(28px, 5vw, 56px);
+    }
+
+    .stat { display: flex; flex-direction: column; gap: 4px; }
+
+    .stat-num {
+      font-family: "Unbounded", sans-serif;
+      font-size: 1.7rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Панель фильтров ---------- */
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toolbar-title {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .toolbar-count { margin-left: 8px; color: var(--text); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .chip:hover { border-color: var(--line-strong); color: var(--text); }
+
+    .chip.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #0a0a0a;
+      font-weight: 600;
+    }
+
+    /* ---------- Карточки ---------- */
+
+    .fact-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 26px 24px 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 55%),
+        var(--surface);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .fact-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 24px;
+      left: 24px;
+      height: 1px;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      transition: opacity 0.25s ease;
+    }
+
+    .fact-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(217, 255, 87, 0.32);
+      box-shadow: 0 28px 60px -30px rgba(0, 0, 0, 0.9);
+    }
+
+    .fact-card:hover::before { opacity: 0.9; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .cat {
+      display: inline-flex;
+      padding: 5px 10px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.61rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .num {
+      color: #4d4d57;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+    }
+
+    .card-title {
+      margin: 0 0 12px;
+      font-family: "Unbounded", sans-serif;
+      font-size: clamp(1.05rem, 1.5vw, 1.26rem);
+      font-weight: 500;
+      line-height: 1.38;
+      letter-spacing: -0.025em;
+    }
+
+    .card-text {
+      display: -webkit-box;
+      flex-grow: 1;
+      margin: 0 0 24px;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.68;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .source {
+      margin-bottom: 14px;
+      overflow: hidden;
+      color: #6d6d77;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.02em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .source a {
+      color: #8b8b95;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: 0.2s ease;
+    }
+
+    .source a:hover {
+      border-color: currentColor;
+      color: var(--accent);
+    }
+
+    .source-empty { color: #4d4d57; }
+
+    .btn-smm {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn-smm .spark {
+      color: var(--accent);
+      font-size: 0.9rem;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+
+    .btn-smm:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #0a0a0a;
+    }
+
+    .btn-smm:hover .spark { color: #0a0a0a; }
+    .btn-smm:active { transform: translateY(0); }
+
+    .filter-note {
+      margin: 26px 0 0;
+      color: #6d6d77;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+    }
+
+    .filter-note a { color: var(--accent); text-decoration: none; }
+
+    .empty {
+      padding: 72px 24px;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .empty-title {
+      margin: 0 0 10px;
+      font-family: "Unbounded", sans-serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+    }
+
+    .empty-text { margin: 0 0 22px; color: var(--muted); font-size: 0.9rem; }
+
+    .link-accent {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(217, 255, 87, 0.35);
+    }
+
+    /* ---------- Подвал ---------- */
+
+    .site-footer {
+      margin-top: clamp(64px, 9vw, 112px);
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+      color: #5a5a63;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 767.98px) {
+      .site-header { padding: 14px 0; }
+      .brand-name { font-size: 0.82rem; }
+      .btn-add { padding: 8px 13px; font-size: 0.74rem; }
+      .hero-title { letter-spacing: -0.045em; }
+      .hero-stats { width: 100%; justify-content: space-between; }
+      .fact-card { padding: 24px 20px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+{% macro plural(n, one, few, many) -%}
+  {%- set n10 = n % 10 -%}
+  {%- set n100 = n % 100 -%}
+  {%- if n10 == 1 and n100 != 11 -%}{{ one }}
+  {%- elif n10 >= 2 and n10 <= 4 and (n100 < 10 or n100 >= 20) -%}{{ few }}
+  {%- else -%}{{ many }}{%- endif -%}
+{%- endmacro %}
+
+<div class="site">
+  <header class="site-header">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">К</span>
+        <span class="brand-name">Код Дизайна</span>
+      </a>
+      <nav class="d-flex align-items-center gap-3 gap-md-4">
+        <span class="header-note d-none d-md-inline">выпуск № 01</span>
+        <a class="btn-add" href="{{ url_for('add_post') }}">+ Добавить факт</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {% if category == 'error' %}flash-error{% endif %}" role="status">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="hero">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Дайджест о графическом дизайне</p>
+      <h1 class="hero-title">Код<br><em>Дизайна</em></h1>
+      <div class="hero-bottom">
+        <p class="hero-lede">
+          Шрифты, логотипы, интерфейсы и брендинг — короткие факты,
+          которые меняют взгляд на привычные вещи.
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">{{ total }}</span>
+            <span class="stat-label">{{ plural(total, 'факт', 'факта', 'фактов') }} в архиве</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">{{ categories|length }}</span>
+            <span class="stat-label">{{ plural(categories|length, 'категория', 'категории', 'категорий') }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="archive" aria-label="Архив фактов">
+      <div class="toolbar">
+        <div class="toolbar-title">Все материалы <span class="toolbar-count">{{ posts|length }}</span></div>
+        <div class="chips">
+          <a class="chip {% if not active_category %}active{% endif %}" href="{{ url_for('index') }}">Все</a>
+          {% for category in categories %}
+            <a class="chip {% if active_category == category %}active{% endif %}"
+               href="{{ url_for('index', category=category) }}">{{ category }}</a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="row g-4">
+        {% for post in posts %}
+          <div class="col-12 col-md-6 col-xl-4 d-flex">
+            <article class="fact-card">
+              <div class="card-top">
+                <span class="cat">{{ post.category }}</span>
+                <span class="num">{{ "%02d"|format(post.id) }}</span>
+              </div>
+
+              <h2 class="card-title">{{ post.title }}</h2>
+              <p class="card-text">{{ post.text }}</p>
+
+              <div class="card-actions">
+                <div class="source">
+                  {% if post.source %}
+                    {% if post.source.startswith('http') %}
+                      <a href="{{ post.source }}" target="_blank" rel="noopener noreferrer">Источник <span aria-hidden="true">↗</span></a>
+                    {% else %}
+                      <span title="{{ post.source }}">{{ post.source }}</span>
+                    {% endif %}
+                  {% else %}
+                    <span class="source-empty">Источник не указан</span>
+                  {% endif %}
+                </div>
+
+                <form method="post" action="{{ url_for('generate_smm', post_id=post.id) }}">
+                  {% if active_category %}
+                    <input type="hidden" name="category" value="{{ active_category }}">
+                  {% endif %}
+                  <button class="btn-smm" type="submit" title="Генератор SMM-постов появится на следующем уроке">
+                    <span class="spark" aria-hidden="true">✦</span>
+                    Сгенерировать SMM-пост
+                  </button>
+                </form>
+              </div>
+            </article>
+          </div>
+        {% else %}
+          <div class="col-12">
+            <div class="empty">
+              <p class="empty-title">
+                {% if active_category %}В категории «{{ active_category }}» пока пусто{% else %}Архив пока пуст{% endif %}
+              </p>
+              <p class="empty-text">Добавьте первый факт — и он сразу появится в дайджесте.</p>
+              <a class="link-accent" href="{{ url_for('add_post') }}">Добавить факт →</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if active_category %}
+        <p class="filter-note">
+          Показано {{ posts|length }} из {{ total }}.
+          <a href="{{ url_for('index') }}">Сбросить фильтр</a>
+        </p>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container d-flex flex-wrap justify-content-between gap-2">
+      <span>Код Дизайна — локальный проект на Flask</span>
+      <span>Bootstrap 5 · {{ year }}</span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

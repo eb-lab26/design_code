@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="ru" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Новый факт — Код Дизайна</title>
+  <meta name="description" content="Добавить факт в дайджест «Код Дизайна».">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2308080a'/%3E%3Cpath d='M22 16v32M42 16L24 32l18 16' stroke='%23d9ff57' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@1,400;1,500&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08080a;
+      --surface: #101013;
+      --surface-2: #15151a;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f3f2ee;
+      --muted: #9a9aa2;
+      --accent: #d9ff57;
+      --accent-soft: rgba(217, 255, 87, 0.12);
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+      mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 20%, transparent 75%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: -42vh;
+      left: 50%;
+      z-index: 0;
+      width: 90vw;
+      height: 75vh;
+      pointer-events: none;
+      transform: translateX(-50%);
+      background: radial-gradient(closest-side, rgba(217, 255, 87, 0.1), transparent);
+    }
+
+    .site {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ---------- Шапка ---------- */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 18px 0;
+      background: rgba(8, 8, 10, 0.72);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      color: var(--accent);
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.95rem;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .brand:hover .brand-mark { background: var(--accent); color: #0a0a0a; }
+
+    .brand-name {
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .header-note {
+      color: #61616a;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: 0.2s ease;
+    }
+
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ---------- Flash ---------- */
+
+    .flash-stack { display: grid; gap: 10px; padding-top: 24px; }
+
+    .flash {
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--accent);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .flash-error { border-left-color: #ff6b6b; }
+
+    /* ---------- Страница ---------- */
+
+    .editor { padding: clamp(36px, 6vw, 72px) 0 clamp(48px, 7vw, 88px); }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 34px;
+      color: #7c7c86;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .intro { position: sticky; top: 118px; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(217, 255, 87, 0.85);
+    }
+
+    .intro-title {
+      margin: 0 0 22px;
+      font-family: "Unbounded", sans-serif;
+      font-size: clamp(2.4rem, 4.6vw, 3.8rem);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+    }
+
+    .intro-title em {
+      color: var(--accent);
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.03em;
+    }
+
+    .intro-lede {
+      max-width: 400px;
+      margin: 0 0 36px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    .tips {
+      max-width: 400px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .tips li {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      color: #86868f;
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    .tips span {
+      flex-shrink: 0;
+      color: #4d4d57;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      line-height: 1.9;
+    }
+
+    /* ---------- Форма ---------- */
+
+    .form-card {
+      padding: clamp(24px, 4vw, 38px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 45%),
+        var(--surface);
+      box-shadow: 0 40px 100px -60px rgba(0, 0, 0, 1);
+    }
+
+    .form-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .form-head-title {
+      margin: 0;
+      font-family: "Unbounded", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .form-head-note {
+      color: #5a5a63;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field { margin-bottom: 24px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .req { color: var(--accent); }
+
+    .form-control {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background-color: var(--surface-2);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control::placeholder { color: #55555f; }
+
+    .form-control:focus {
+      border-color: var(--accent);
+      background-color: var(--surface-2);
+      color: var(--text);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    textarea.form-control { resize: vertical; min-height: 150px; }
+
+    .hint {
+      margin-top: 8px;
+      color: #5f5f69;
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px;
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn-publish {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 22px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: inherit;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn-publish:hover {
+      transform: translateY(-1px);
+      background: #e6ff86;
+      box-shadow: 0 12px 32px -12px rgba(217, 255, 87, 0.45);
+    }
+
+    .btn-publish span { font-size: 1rem; line-height: 1; }
+
+    .btn-cancel {
+      color: #8a8a94;
+      font-size: 0.8rem;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: 0.2s ease;
+    }
+
+    .btn-cancel:hover { border-color: currentColor; color: var(--text); }
+
+    /* ---------- Подвал ---------- */
+
+    .site-footer {
+      margin-top: auto;
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+      color: #5a5a63;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 991.98px) {
+      .intro { position: static; margin-bottom: 8px; }
+      .intro-lede { margin-bottom: 24px; }
+      .tips { max-width: none; }
+      .tips li { padding: 11px 0; }
+    }
+
+    @media (max-width: 575.98px) {
+      .site-header { padding: 14px 0; }
+      .brand-name { font-size: 0.82rem; }
+      .btn-back { padding: 8px 13px; font-size: 0.74rem; }
+      .btn-publish { width: 100%; justify-content: center; }
+      .btn-cancel { width: 100%; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="site">
+  <header class="site-header">
+    <div class="container d-flex align-items-center justify-content-between gap-3">
+      <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-mark">К</span>
+        <span class="brand-name">Код Дизайна</span>
+      </a>
+      <nav class="d-flex align-items-center gap-3 gap-md-4">
+        <span class="header-note d-none d-md-inline">новый материал</span>
+        <a class="btn-back" href="{{ url_for('index') }}">← К дайджесту</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container editor">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {% if category == 'error' %}flash-error{% endif %}" role="alert">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <a class="back-link" href="{{ url_for('index') }}">← Все факты</a>
+
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <aside class="intro">
+          <p class="eyebrow"><span class="eyebrow-dot"></span>Ручное добавление</p>
+          <h1 class="intro-title">Новый<br><em>факт</em></h1>
+          <p class="intro-lede">
+            Одна история, один источник, одна мысль. Всё, что вы добавите,
+            сразу появится в ленте на главной странице.
+          </p>
+          <ol class="tips">
+            <li><span>01</span>Заголовок до 120 символов: короткие формулировки читаются лучше.</li>
+            <li><span>02</span>Текст факта — от 20 символов, без воды и лишних вступлений.</li>
+            <li><span>03</span>Категория помогает читателю фильтровать архив: шрифты, логотипы, интерфейсы.</li>
+            <li><span>04</span>Источник можно указать ссылкой или названием книги, студии, года.</li>
+          </ol>
+        </aside>
+      </div>
+
+      <div class="col-lg-7">
+        <form class="form-card" method="post" action="{{ url_for('add_post') }}">
+          <div class="form-head">
+            <h2 class="form-head-title">Карточка факта</h2>
+            <span class="form-head-note">сохранение в posts.json</span>
+          </div>
+
+          <div class="field">
+            <label for="title">Заголовок <span class="req">*</span></label>
+            <input class="form-control" type="text" id="title" name="title"
+                   value="{{ form.title }}" maxlength="120" required
+                   placeholder="Например: почему у Apple надкушено яблоко">
+          </div>
+
+          <div class="field">
+            <label for="text">Текст факта <span class="req">*</span></label>
+            <textarea class="form-control" id="text" name="text" rows="7" maxlength="1200" required
+                      placeholder="Расскажите историю: что произошло, кто автор и почему это важно?">{{ form.text }}</textarea>
+            <p class="hint">До 1200 символов. Один факт — одна мысль.</p>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="field">
+                <label for="category">Категория <span class="req">*</span></label>
+                <input class="form-control" type="text" id="category" name="category"
+                       value="{{ form.category }}" maxlength="40" required list="categories"
+                       placeholder="Шрифты">
+                <datalist id="categories">
+                  <option value="Шрифты"></option>
+                  <option value="Логотипы"></option>
+                  <option value="Интерфейсы"></option>
+                  <option value="Брендинг"></option>
+                  <option value="История"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="field">
+                <label for="source">Источник</label>
+                <input class="form-control" type="text" id="source" name="source"
+                       value="{{ form.source }}" maxlength="200"
+                       placeholder="Ссылка или название">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-publish" type="submit">Опубликовать факт <span aria-hidden="true">→</span></button>
+            <a class="btn-cancel" href="{{ url_for('index') }}">Отмена</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container d-flex flex-wrap justify-content-between gap-2">
+      <span>Код Дизайна — локальный проект на Flask</span>
+      <span>Bootstrap 5 · {{ year }}</span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
